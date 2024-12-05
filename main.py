@@ -1,11 +1,12 @@
 import os
-from typing import Union
 from pydantic import BaseModel
-from openai import OpenAI
+from openai import OpenAI  # type: ignore
 from fastapi import FastAPI, Depends, HTTPException
-from dotenv import load_dotenv
-import phospho
+import replicate
+from dotenv import load_dotenv  # type: ignore
+import phospho  # type: ignore
 from fastapi.security.http import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.responses import FileResponse
 
 load_dotenv()
 
@@ -25,7 +26,7 @@ phospho.init(
 bearer = HTTPBearer()
 
 
-def get_api_hey(authorization: HTTPAuthorizationCredentials = Depends(bearer)) -> str:
+def get_api_hey(authorization: HTTPAuthorizationCredentials = Depends(bearer)) -> None:
     # Parse credentials
     api_key_token = authorization.credentials
 
@@ -85,3 +86,40 @@ def send_message_secure(request: Message, api_key: str = Depends(get_api_hey)):
     answer = completion.choices[0].message.content
 
     return {"answer": answer}
+
+
+@app.post("/image")
+def send_image(request: Message):
+    prompt = request.message
+
+    # Call Replicate
+    output = replicate.run(
+        "black-forest-labs/flux-schnell",
+        input={
+            "prompt": prompt,
+            "go_fast": True,
+            "megapixels": "1",
+            "num_outputs": 1,
+            "aspect_ratio": "1:1",
+            "output_format": "webp",
+            "output_quality": 80,
+            "num_inference_steps": 4,
+        },
+    )
+
+    # Save the generated image
+    with open("generated_image.webp", "wb") as f:
+        f.write(output[0].read())
+
+    # Return the image file
+    return FileResponse(
+        path="generated_image.webp",
+        media_type="image/webp",
+        filename="generated_image.webp",
+    )
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)

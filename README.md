@@ -17,10 +17,12 @@ Create a .env file with the following content:
 
 ```bash
 OPENAI_API_KEY="YOUR_OPENAI_API_KEY"
+PHOSPHO_API_KEY="YOUR_PHOSPHO_API_KEY"
+PHOSPHO_PROJECT_ID="YOUR_PHOSPHO_PROJECT_ID"
 ```
 
 ## Run
 
 ```bash
-fastapi dev main.py
+python main.py
 ```
