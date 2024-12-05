@@ -14,7 +14,7 @@ app = FastAPI()
 
 
 phospho.init(
-    api_key=os.getenv("PHOSPHO_API_KEY"), project_id="9c2b674fd8eb4db2a6b15309af2b0ade"
+    api_key=os.getenv("PHOSPHO_API_KEY"), project_id=os.getenv("PHOSPHO_PROJECT_ID")
 )
 
 # input_str = "Hello! This is what the user asked to the system"
