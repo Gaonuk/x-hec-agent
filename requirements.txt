@@ -4,3 +4,7 @@ python-dotenv
 phospho
 replicate
 uvicorn
+pinecone-client
+python-dotenv
+scikit-learn
+groq
