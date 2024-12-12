@@ -234,7 +234,7 @@ def recommend_workout_formatted(request: FormattedWorkoutRequest):
         )
         
         formatted_response = format_workout_with_groq(
-            exercises.slice(0, request.num_exercises),
+            exercises[:request.num_exercises],
             request.format_style
         )
         
